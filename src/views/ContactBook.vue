@@ -40,18 +40,20 @@
           }"
         >
           <span class="mt-2 badge badge-warning">
-            <i class="fas fa-edit"></i> Hiệu chỉnh</span
-          >
+            <i class="fas fa-edit"></i> Hiệu chỉnh
+          </span>
         </router-link>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import ContactCard from "@/components/ContactCard.vue";
 import InputSearch from "@/components/InputSearch.vue";
 import ContactList from "@/components/ContactList.vue";
 import ContactService from "@/services/contact.service";
+
 export default {
   components: {
     ContactCard,
@@ -95,15 +97,16 @@ export default {
       return this.filteredContacts.length;
     },
   },
-  method: {
+  methods: {
     async retrieveContacts() {
       try {
-        this.contacts = await ContactService.getAll();
+        const response = await ContactService.getAll();
+        this.contacts = Array.isArray(response) ? response : [];
       } catch (error) {
-        console.log(error);
+        console.error("Lỗi khi lấy danh sách liên hệ:", error);
+        this.contacts = [];
       }
     },
-
     refreshList() {
       this.retrieveContacts();
       this.activeIndex = -1;
@@ -114,7 +117,7 @@ export default {
           await ContactService.deleteAll();
           this.refreshList();
         } catch (error) {
-          console.log(error);
+          console.error("Lỗi khi xóa tất cả liên hệ:", error);
         }
       }
     },
@@ -127,6 +130,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .page {
   text-align: left;
